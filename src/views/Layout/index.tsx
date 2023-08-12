@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useState} from "react";
+import {Outlet,useLocation,useNavigate} from "react-router-dom"
 import {
   LaptopOutlined,
   NotificationOutlined,
@@ -9,33 +10,59 @@ import { Breadcrumb, Layout, Menu, theme } from "antd";
 import layoutCss from "./index.module.scss"
 const { Header, Content, Sider } = Layout;
 
+// menu配置
 const items2: MenuProps["items"] = [
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
-].map((icon, index) => {
-  const key = String(index + 1);
+  {
+    key:"/layout/page1",
+    label:"栏目1",
+    icon:<LaptopOutlined/>,
+  },
+  {
+    key:"/layout/page2",
+    label:"栏目2",
+    icon:<LaptopOutlined/>
+  },
+  {
+    key:"/layout/model",
+    label:"栏目三",
+    icon:<LaptopOutlined/>,
+    children:[
+      {
+        key:"/layout/model/page1",
+        label:"子页面1",
+      },
+      {
+        key:"/layout/model/page2",
+        label:"子页面2",
+      }
+    ]
+  }
+]
 
-  return {
-    key: `sub${key}`,
-    icon: React.createElement(icon),
-    label: `subnav ${key}`,
 
-    children: new Array(4).fill(null).map((_, j) => {
-      const subKey = index * 4 + j + 1;
-      return {
-        key: subKey,
-        label: `option${subKey}`,
-      };
-    }),
-  };
-});
+
+
+
+
 
 const App: React.FC = () => {
+  const [openkeys,setOpenkeys] = useState(['']);
+  const navigateTo  = useNavigate();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const currentRoute = useLocation();
+  console.log("route",currentRoute)
+
+  const navigateClick = ({key}:{key:string})=>{
+    navigateTo(key);
+  }
+
+  const openChange = (openKeys:string[])=>{
+    console.log(openKeys,"openchange")
+    setOpenkeys([...openKeys])
+  }
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header style={{ display: "flex", alignItems: "center" }}>
@@ -45,10 +72,12 @@ const App: React.FC = () => {
         <Sider width={200} style={{ background: colorBgContainer }}>
           <Menu
             mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
+            defaultSelectedKeys={[currentRoute.pathname==="/layout"?+currentRoute.pathname+"/page1":currentRoute.pathname]}
+            openKeys={openkeys}
             style={{ height: "100%", borderRight: 0 }}
             items={items2}
+            onClick={navigateClick}
+            onOpenChange={openChange}
           />
         </Sider>
         <Layout style={{ padding: "0 24px 24px" }}>
@@ -60,12 +89,12 @@ const App: React.FC = () => {
               background: colorBgContainer,
             }}
           >
-            <Breadcrumb style={{ margin: "16px 0" }}>
+            <Breadcrumb style={{ margin: "0 0 20px 0" }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
               <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
             </Breadcrumb>
-            Content
+            {/* 占位 */}
+            <Outlet/>
           </Content>
         </Layout>
       </Layout>
