@@ -1,14 +1,18 @@
 {
   "compilerOptions": {
+    // 路径提示
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "module": "NodeNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "node", //
+    "esModuleInterop": true,    //支持默认导入
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
